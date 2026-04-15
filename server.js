@@ -1,72 +1,53 @@
 const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
-const path = require('path'); // ADD THIS
+const path = require('path');
 const app = express();
 
-const DATABASE = 'students.json';
+const DATABASE = path.join(__dirname, 'students.json');
 
 app.use(cors());
 app.use(express.json());
 
-// --- ADD THIS SECTION HERE ---
-// This tells the server to serve all files in the 'frontend' folder
-app.use('/frontend', express.static(path.join(__dirname, '../frontend')));
+// Serve all files (HTML, CSS, JS) from the root folder
+app.use(express.static(__dirname));
 
-// This makes the main link show your index.html automatically
+// Send index.html when someone visits the main URL
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
-// -----------------------------
 
-// ... keep all your other routes (app.get('/list'), app.post('/add'), etc.) below ...
+// --- API ROUTES ---
 
-// 1. GET: Fetch the list
 app.get('/list', (req, res) => {
     if (!fs.existsSync(DATABASE)) return res.json([]);
     const data = fs.readFileSync(DATABASE);
     res.json(JSON.parse(data));
 });
 
-// 2. POST: Add a person
 app.post('/add', (req, res) => {
     const { name, password } = req.body;
     if (password !== "1234") return res.status(401).send("Wrong Password");
-
-    let students = [];
-    if (fs.existsSync(DATABASE)) {
-        students = JSON.parse(fs.readFileSync(DATABASE));
-    }
-
+    
+    let students = fs.existsSync(DATABASE) ? JSON.parse(fs.readFileSync(DATABASE)) : [];
     students.push({ name, time: new Date().toLocaleString() });
     fs.writeFileSync(DATABASE, JSON.stringify(students));
-    res.send("Attendance Marked Successfully");
+    res.send("Success");
 });
 
-// 3. DELETE: Clear ONE record
 app.delete('/delete/:index', (req, res) => {
-    const index = req.params.index;
-    if (!fs.existsSync(DATABASE)) return res.status(404).send();
-
     let students = JSON.parse(fs.readFileSync(DATABASE));
-    students.splice(index, 1);
+    students.splice(req.params.index, 1);
     fs.writeFileSync(DATABASE, JSON.stringify(students));
     res.send("Deleted");
 });
 
-// 4. DELETE: Clear ALL records (This is what was missing/hidden)
 app.delete('/clear', (req, res) => {
-    // Check for a secret password in the request headers
-    const adminPassword = req.headers['admin-secret'];
-
-    if (adminPassword !== "admin123") {
-        console.log("Unauthorized attempt to clear database!");
-        return res.status(403).send("Forbidden: Admin access only");
-    }
-
+    if (req.headers['admin-secret'] !== "admin123") return res.status(403).send("Forbidden");
     fs.writeFileSync(DATABASE, JSON.stringify([]));
-    console.log("Database cleared by Admin.");
-    res.send("Database Cleared");
+    res.send("Cleared");
 });
+
+// Use Render's port or default to 3000
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is live on port ${PORT}`));
