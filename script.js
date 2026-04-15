@@ -8,7 +8,8 @@ async function markAttendance() {
     
     if(!name || !password) return alert("Fill all fields");
 
-    const response = await fetch('http://localhost:3000/add', {
+    // REMOVED localhost:3000 - Using relative path '/add'
+    const response = await fetch('/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, password })
@@ -25,7 +26,8 @@ async function markAttendance() {
 
 // 2. Load and Count Function
 async function loadList() {
-    const response = await fetch('http://localhost:3000/list');
+    // REMOVED localhost:3000 - Using relative path '/list'
+    const response = await fetch('/list');
     const data = await response.json();
     const listDiv = document.getElementById('attendanceList');
     const countSpan = document.getElementById('presenceCount'); 
@@ -49,7 +51,8 @@ async function loadList() {
 // 3. Delete Function
 async function deleteEntry(index) {
     if(!confirm("Delete this?")) return;
-    await fetch(`http://localhost:3000/delete/${index}`, { method: 'DELETE' });
+    // REMOVED localhost:3000
+    await fetch(`/delete/${index}`, { method: 'DELETE' });
     loadList();
 }
 
@@ -69,19 +72,19 @@ function toggleTheme() {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
 
-// 6. Startup Logic (Runs when page opens)
+// 6. Startup Logic
 if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode');
 }
 loadList();
+
+// 7. Admin Clear All Function
 async function clearAll() {
-    // 1. Ask for the Admin Password
     const password = prompt("Enter Admin Password to clear all records:");
+    if (!password) return;
 
-    if (!password) return; // User hit cancel
-
-    // 2. Send the request with the password hidden in the 'headers'
-    const response = await fetch('http://localhost:3000/clear', { 
+    // REMOVED localhost:3000
+    const response = await fetch('/clear', { 
         method: 'DELETE',
         headers: {
             'admin-secret': password
