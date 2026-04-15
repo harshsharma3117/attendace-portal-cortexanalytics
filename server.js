@@ -1,12 +1,25 @@
 const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
+const path = require('path'); // ADD THIS
 const app = express();
 
 const DATABASE = 'students.json';
 
 app.use(cors());
 app.use(express.json());
+
+// --- ADD THIS SECTION HERE ---
+// This tells the server to serve all files in the 'frontend' folder
+app.use('/frontend', express.static(path.join(__dirname, '../frontend')));
+
+// This makes the main link show your index.html automatically
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
+});
+// -----------------------------
+
+// ... keep all your other routes (app.get('/list'), app.post('/add'), etc.) below ...
 
 // 1. GET: Fetch the list
 app.get('/list', (req, res) => {
