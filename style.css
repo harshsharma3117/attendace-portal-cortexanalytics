@@ -121,6 +121,38 @@ body.dark-mode .clear-btn {
     color: #b91c1c;
     border-color: #fecaca;
 }
+/* The Logo Container */
+.logo-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+/* The Professional Node Icon */
+.tech-node {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6); /* Blue to Purple gradient */
+    border-radius: 6px;
+    transform: rotate(45deg); /* Turns the square into a diamond */
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); /* The professional glow */
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Adds a "Core" dot inside the diamond */
+.tech-node::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px white;
+}
 
 /* Dark mode version of the hover */
 body.dark-mode .clear-btn:hover {
