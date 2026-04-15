@@ -8,7 +8,6 @@ async function markAttendance() {
     
     if(!name || !password) return alert("Fill all fields");
 
-    // REMOVED localhost:3000 - Using relative path '/add'
     const response = await fetch('/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -26,7 +25,6 @@ async function markAttendance() {
 
 // 2. Load and Count Function
 async function loadList() {
-    // REMOVED localhost:3000 - Using relative path '/list'
     const response = await fetch('/list');
     const data = await response.json();
     const listDiv = document.getElementById('attendanceList');
@@ -48,22 +46,18 @@ async function loadList() {
     `).reverse().join('');
 }
 
-// 3. Delete Function
+// 3. Delete Function (ADMIN ONLY)
 async function deleteEntry(index) {
-    // 1. Ask for password
     const password = prompt("Enter Admin Password to delete this record:");
     if (!password) return;
 
-    // 2. Send request with the secret header
     const response = await fetch(`/delete/${index}`, { 
         method: 'DELETE',
-        headers: {
-            'admin-secret': password
-        }
+        headers: { 'admin-secret': password }
     });
 
     if (response.ok) {
-        loadList(); // Refresh the list
+        loadList();
     } else {
         alert("Access Denied: Invalid Admin Password.");
     }
@@ -91,17 +85,14 @@ if (localStorage.getItem('theme') === 'dark') {
 }
 loadList();
 
-// 7. Admin Clear All Function
+// 7. Clear All Function (ADMIN ONLY)
 async function clearAll() {
     const password = prompt("Enter Admin Password to clear all records:");
     if (!password) return;
 
-    // REMOVED localhost:3000
     const response = await fetch('/clear', { 
         method: 'DELETE',
-        headers: {
-            'admin-secret': password
-        }
+        headers: { 'admin-secret': password }
     });
 
     if (response.ok) {
