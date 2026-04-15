@@ -10,11 +10,14 @@
 <body>
 
     <div class="card">
-        <header class="header">
-            <button class="theme-btn" onclick="toggleTheme()">🌓</button>
-            <h2>Cortex Analytics</h2>
-            <p>Attendance Portal</p>
-        </header>
+       <header class="header">
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+    <div class="logo-wrapper">
+        <div class="tech-node"></div>
+    </div>
+    <h2>Cortex Analytics</h2>
+    <p>Attendance Portal</p>
+</header>
 
         <form class="form-container" onsubmit="event.preventDefault(); markAttendance();">
             <input type="text" id="employeeName" placeholder="Employee Name" autofocus>
