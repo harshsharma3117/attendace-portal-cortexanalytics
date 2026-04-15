@@ -34,12 +34,19 @@ app.post('/add', (req, res) => {
     fs.writeFileSync(DATABASE, JSON.stringify(students));
     res.send("Success");
 });
-
 app.delete('/delete/:index', (req, res) => {
+    const adminPassword = req.headers['admin-secret'];
+
+    // Security Check
+    if (adminPassword !== "admin123") {
+        return res.status(403).send("Forbidden");
+    }
+
     let students = JSON.parse(fs.readFileSync(DATABASE));
     students.splice(req.params.index, 1);
     fs.writeFileSync(DATABASE, JSON.stringify(students));
-    res.send("Deleted");
+    res.send("Ok");
+});
 });
 
 app.delete('/clear', (req, res) => {
