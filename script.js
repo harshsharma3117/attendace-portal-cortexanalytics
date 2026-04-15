@@ -1,0 +1,97 @@
+// 1. Mark Attendance Function
+async function markAttendance() {
+    const nameInput = document.getElementById('employeeName'); 
+    const passInput = document.getElementById('passCode');
+    
+    const name = nameInput.value;
+    const password = passInput.value;
+    
+    if(!name || !password) return alert("Fill all fields");
+
+    const response = await fetch('http://localhost:3000/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, password })
+    });
+
+    if (response.status === 401) alert("Wrong Password");
+    else { 
+        nameInput.value = ""; 
+        passInput.value = ""; 
+        nameInput.focus(); 
+        loadList(); 
+    }
+}
+
+// 2. Load and Count Function
+async function loadList() {
+    const response = await fetch('http://localhost:3000/list');
+    const data = await response.json();
+    const listDiv = document.getElementById('attendanceList');
+    const countSpan = document.getElementById('presenceCount'); 
+    
+    if(countSpan) countSpan.innerText = `${data.length} Present`;
+
+    listDiv.innerHTML = data.map((item, index) => `
+        <div class="log-item">
+            <div class="log-info">
+                <b>${item.name}</b>
+                <small>${item.time}</small>
+            </div>
+            <div class="actions">
+                <span class="status-badge">PRESENT</span>
+                <button class="del-btn" onclick="deleteEntry(${index})">Delete</button>
+            </div>
+        </div>
+    `).reverse().join('');
+}
+
+// 3. Delete Function
+async function deleteEntry(index) {
+    if(!confirm("Delete this?")) return;
+    await fetch(`http://localhost:3000/delete/${index}`, { method: 'DELETE' });
+    loadList();
+}
+
+// 4. Search/Filter Function
+function filterList() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const records = document.querySelectorAll('.log-item');
+    records.forEach(r => {
+        const name = r.querySelector('b').innerText.toLowerCase();
+        r.style.display = name.includes(query) ? "flex" : "none";
+    });
+}
+
+// 5. Dark Mode Toggle
+function toggleTheme() {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// 6. Startup Logic (Runs when page opens)
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+}
+loadList();
+async function clearAll() {
+    // 1. Ask for the Admin Password
+    const password = prompt("Enter Admin Password to clear all records:");
+
+    if (!password) return; // User hit cancel
+
+    // 2. Send the request with the password hidden in the 'headers'
+    const response = await fetch('http://localhost:3000/clear', { 
+        method: 'DELETE',
+        headers: {
+            'admin-secret': password
+        }
+    });
+
+    if (response.ok) {
+        alert("System Reset: All records cleared.");
+        loadList(); 
+    } else {
+        alert("Access Denied: Invalid Admin Password.");
+    }
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortex Analytics | Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="card">
+        <header class="header">
+            <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+            <h2>Cortex Analytics</h2>
+            <p>Attendance Portal</p>
+        </header>
+
+        <form class="form-container" onsubmit="event.preventDefault(); markAttendance();">
+            <input type="text" id="employeeName" placeholder="Employee Name" autofocus>
+            <input type="password" id="passCode" placeholder="Portal Password">
+            <button type="submit" class="primary-btn">Mark Present</button>
+            
+            <input type="text" id="searchInput" placeholder="🔍 Search logs..." onkeyup="filterList()">
+        </form>
+
+        <div class="list-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 24px;">
+    <span class="list-title">Recent Activity</span>
+    <span id="presenceCount" class="stat-pill">0 Present</span>
+</div>
+<div id="attendanceList"></div>
+
+<div style="padding: 0 24px 24px 24px;">
+    <button class="clear-btn" onclick="clearAll()">Clear All Records</button>
+</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
