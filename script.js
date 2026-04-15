@@ -50,10 +50,23 @@ async function loadList() {
 
 // 3. Delete Function
 async function deleteEntry(index) {
-    if(!confirm("Delete this?")) return;
-    // REMOVED localhost:3000
-    await fetch(`/delete/${index}`, { method: 'DELETE' });
-    loadList();
+    // 1. Ask for password
+    const password = prompt("Enter Admin Password to delete this record:");
+    if (!password) return;
+
+    // 2. Send request with the secret header
+    const response = await fetch(`/delete/${index}`, { 
+        method: 'DELETE',
+        headers: {
+            'admin-secret': password
+        }
+    });
+
+    if (response.ok) {
+        loadList(); // Refresh the list
+    } else {
+        alert("Access Denied: Invalid Admin Password.");
+    }
 }
 
 // 4. Search/Filter Function
